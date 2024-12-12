@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1A2B Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #F5F5F5;
+            color: #2D3436; 
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-top: 20px;
+            color: #C59694;
+            font-weight: 700;
+        }
+
+        p {
+            color: #555;
+            margin: 10px 0;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #CCCCD6;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 220px;
+            margin-bottom: 10px;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #C59694;
+            box-shadow: 0 0 8px rgba(197, 150, 148, 0.5);
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            background-color: #C59694;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #A97472; 
+            transform: translateY(-2px);
+        }
+
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            border: 1px solid #CCCCD6; 
+        }
+
+        #results p {
+            font-size: 16px;
+            color: #2D3436;
+            margin: 5px 0;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #B2BEC3; 
+        }
+    </style>
+</head>
+<body>
+    <h1>113306026_HW6_1A2B</h1>
+    <p>輸入 4 個不重複的數字：</p>
+    <input id="guessInput" type="text" maxlength="4" placeholder="輸入數字">
+    <button onclick="submitGuess()">提交答案</button>
+    <div id="results"></div>
+    <footer>Inspired by Modern Dual-Color Matching</footer>
+
+    <script>
+        let answer = generateAnswer();
+        let attempts = 0;
+
+        function generateAnswer() {
+            const digits = [...Array(10).keys()]; // [0, 1, 2, ..., 9]
+            const answerArray = [];
+            while (answerArray.length < 4) {
+                const randomIndex = Math.floor(Math.random() * digits.length);
+                answerArray.push(digits.splice(randomIndex, 1)[0]);
+            }
+            return answerArray.join('');
+        }
+
+        function submitGuess() {
+            const inputField = document.getElementById('guessInput');
+            const guess = inputField.value;
+            inputField.value = ''; // 清空輸入框
+            if (!validateGuess(guess)) return;
+
+            attempts++;
+            const result = compareGuess(guess);
+            displayResult(guess, result);
+
+            if (result === '4A0B') {
+                alert(`恭喜答對！總共嘗試了 ${attempts} 次。`);
+                resetGame();
+            }
+        }
+
+        function validateGuess(guess) {
+            if (guess.length !== 4 || isNaN(guess)) {
+                alert('請輸入 4 個數字！');
+                return false;
+            }
+            const uniqueDigits = new Set(guess);
+            if (uniqueDigits.size !== 4) {
+                alert('數字不能重複！');
+                return false;
+            }
+            return true;
+        }
+
+        function compareGuess(guess) {
+            let A = 0, B = 0;
+            for (let i = 0; i < 4; i++) {
+                if (guess[i] === answer[i]) {
+                    A++;
+                } else if (answer.includes(guess[i])) {
+                    B++;
+                }
+            }
+            return `${A}A${B}B`;
+        }
+
+        function displayResult(guess, result) {
+            const resultsDiv = document.getElementById('results');
+            const resultEntry = document.createElement('p');
+            resultEntry.textContent = `猜測: ${guess} 結果: ${result}`;
+            resultsDiv.appendChild(resultEntry);
+        }
+
+        function resetGame() {
+            answer = generateAnswer();
+            attempts = 0;
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
